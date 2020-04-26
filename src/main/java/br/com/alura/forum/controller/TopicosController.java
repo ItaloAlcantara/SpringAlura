@@ -11,6 +11,8 @@ import br.com.alura.forum.controller.form.TopicoForm;
 
 import br.com.alura.forum.repository.CursoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +35,16 @@ public class TopicosController {
 
 	@Autowired
 	private CursoRepository cursoRepository;
+
+	private final static String LISTA_TOPICOS = "listaTopicos";
+    private final static String LISTA_TOPICO_DETALHADO = "listaTopicoDetalhado";
+
 	@GetMapping
+    @Cacheable(value = LISTA_TOPICOS)
 	public Page<TopicoDto> lista(@RequestParam(required = false) String nomeCurso,
                                  @PageableDefault(sort = "id",size = 5) org.springframework.data.domain.Pageable paginacao) {
 
+	    System.out.println("executado");
 		if (nomeCurso == null) {
 			Page<Topico> topicos = topicoRepository.findAll(paginacao);
 			return TopicoDto.converter(topicos);
@@ -47,6 +55,7 @@ public class TopicosController {
 	}
 
 	@PostMapping
+    @CacheEvict(value = LISTA_TOPICOS,allEntries = true)
 	public ResponseEntity<TopicoDto> cadastrar(@RequestBody @Valid TopicoForm topicoForm, UriComponentsBuilder uriComponentsBuilder){
 
 		Topico topico = topicoForm.converter(cursoRepository);
@@ -57,6 +66,7 @@ public class TopicosController {
 	}
 
 	@GetMapping("/{id}")
+    @Cacheable(value = LISTA_TOPICO_DETALHADO)
 	public DetalhesDoTopicoDto detalhar(@PathVariable Long id) throws ExceptionMessage {
 		if(!topicoRepository.findById(id).isPresent()){
 			throw new ExceptionMessage();
@@ -66,6 +76,7 @@ public class TopicosController {
 
 	@PutMapping("/{id}")
 	@Transactional
+    @CacheEvict(value = LISTA_TOPICOS,allEntries = true)
 	public ResponseEntity<TopicoDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizarTopicoForm topicoForm) throws ExceptionMessage {
 		Topico topico = topicoForm.atualizer(id,topicoRepository);
 
@@ -73,6 +84,7 @@ public class TopicosController {
 	}
 
 	@DeleteMapping("/{id}")
+    @CacheEvict(value = (LISTA_TOPICOS),allEntries = true)
 	public ResponseEntity deletar(@PathVariable Long id) throws ExceptionMessage {
 		if(!topicoRepository.findById(id).isPresent())
 			throw new ExceptionMessage();
