@@ -8,12 +8,11 @@ import br.com.alura.forum.config.ExceptionMessage;
 import br.com.alura.forum.controller.dto.DetalhesDoTopicoDto;
 import br.com.alura.forum.controller.form.AtualizarTopicoForm;
 import br.com.alura.forum.controller.form.TopicoForm;
+
 import br.com.alura.forum.repository.CursoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,9 +34,8 @@ public class TopicosController {
 	@Autowired
 	private CursoRepository cursoRepository;
 	@GetMapping
-	public Page<TopicoDto> lista(@RequestParam(required = false) String nomeCurso, @RequestParam int pag, @RequestParam int qtd, @RequestParam String ordenacao) {
-
-		PageRequest paginacao = PageRequest.of(pag,qtd,Sort.Direction.ASC,ordenacao);
+	public Page<TopicoDto> lista(@RequestParam(required = false) String nomeCurso,
+                                 @PageableDefault(sort = "id",size = 5) org.springframework.data.domain.Pageable paginacao) {
 
 		if (nomeCurso == null) {
 			Page<Topico> topicos = topicoRepository.findAll(paginacao);
