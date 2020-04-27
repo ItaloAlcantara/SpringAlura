@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.List;
 
 import br.com.alura.forum.config.ExceptionMessage;
+import br.com.alura.forum.config.seguranca.TokenService;
 import br.com.alura.forum.controller.dto.DetalhesDoTopicoDto;
 import br.com.alura.forum.controller.form.AtualizarTopicoForm;
 import br.com.alura.forum.controller.form.TopicoForm;
