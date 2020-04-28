@@ -31,4 +31,13 @@ public class TokenService {
                 .signWith(SignatureAlgorithm.HS512,secret)
                 .compact();
     }
+
+    public boolean isValido(String token) {
+
+        try {
+        Jwts.parser().setSigningKey(this.secret).parseClaimsJws(token);
+        return true;
+        }catch (Exception e){return false;}
+
+    }
 }
