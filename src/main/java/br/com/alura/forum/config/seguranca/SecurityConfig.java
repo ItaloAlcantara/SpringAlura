@@ -41,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        String[] endpointsGet = {"/topicos","/topicos/*"};
+        String[] endpointsGet = {"/topicos","/topicos/*","/actuator/**"};
         String[] endpointsPost= {"/auth"};
         http.authorizeRequests()
                 .antMatchers(HttpMethod.GET,endpointsGet).permitAll()
@@ -67,5 +67,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
 
+        web.ignoring().antMatchers("/**.html","/v2/api-docs","/webjars/**","/configuration/**","/swagger-resources/**");
     }
 }
